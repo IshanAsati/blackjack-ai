@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173e46">
+  <title>The Learning Table · Blackjack AI</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="masthead">
+      <a class="wordmark" href="/" aria-label="The Learning Table home">
+        <span class="wordmark-mark">21</span>
+        <span><strong>The Learning Table</strong><small>Blackjack, advised by DQN</small></span>
+      </a>
+      <div class="session-score" aria-label="Session score">
+        <span><small>Won</small><strong id="wins">0</strong></span>
+        <span><small>Drawn</small><strong id="draws">0</strong></span>
+        <span><small>Lost</small><strong id="losses">0</strong></span>
+      </div>
+    </header>
+
+    <main class="table-layout">
+      <section class="table" aria-labelledby="table-title">
+        <div class="hand dealer-hand">
+          <div class="hand-label"><span>Dealer</span><strong id="dealer-total">—</strong></div>
+          <div class="cards" id="dealer-cards" aria-label="Dealer cards"></div>
+        </div>
+
+        <div class="table-center">
+          <p class="eyebrow" id="status-label">The table is ready</p>
+          <h1 id="table-title">Learn the decision,<br>one hand at a time.</h1>
+          <p class="result-copy" id="result-copy">Deal a hand. The model will read the same cards you can see.</p>
+        </div>
+
+        <div class="hand player-hand">
+          <div class="hand-label"><span>Your hand</span><strong id="player-total">—</strong></div>
+          <div class="cards" id="player-cards" aria-label="Your cards"></div>
+        </div>
+
+        <div class="actions" aria-label="Game actions">
+          <button class="button button-secondary" id="hit" disabled>Hit</button>
+          <button class="button button-secondary" id="stand" disabled>Stand</button>
+          <button class="button button-primary" id="deal">Deal a hand</button>
+        </div>
+      </section>
+
+      <aside class="rail" aria-label="AI decision rail">
+        <div class="rail-heading">
+          <span class="live-dot"></span>
+          <span>DQN decision rail</span>
+        </div>
+        <div class="advice-card" id="advice-card">
+          <p class="eyebrow">Model says</p>
+          <p class="advice-action" id="advice-action">Waiting</p>
+          <p class="advice-note" id="advice-note">Deal a hand to see the model’s preferred move.</p>
+        </div>
+        <div class="values" id="values" hidden>
+          <div><span>Stand value</span><strong id="stand-value">—</strong></div>
+          <div><span>Hit value</span><strong id="hit-value">—</strong></div>
+        </div>
+        <div class="agreement" id="agreement" hidden>
+          <span class="agreement-symbol" id="agreement-symbol">✓</span>
+          <p><strong id="agreement-title">You agreed</strong><br><span id="agreement-copy">Your move matched the model.</span></p>
+        </div>
+        <div class="rail-rule"></div>
+        <p class="rules-copy">Dealer stands on 17. Aces count as 1 or 11. This table uses even-money rewards and an unlimited deck.</p>
+        <button class="text-button" id="reset-score">Reset session score</button><br>
+        <a class="text-button" href="/advise" style="text-decoration:none">Advise my own cards ↗</a>
+      </aside>
+    </main>
+
+    <footer>
+      <span>The model sees your total, the dealer’s up-card, and usable aces.</span>
+      <span>For learning and experimentation.</span>
+    </footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

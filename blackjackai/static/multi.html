@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173e46">
+  <title>Shared Table · Multiplayer Blackjack AI</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/multi.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="masthead">
+      <a class="wordmark" href="/" aria-label="The Learning Table home">
+        <span class="wordmark-mark">21</span>
+        <span><strong>Shared Table</strong><small>Multiplayer, advised by DQN</small></span>
+      </a>
+      <div class="session-score" aria-label="Table score">
+        <span><small>Wins</small><strong id="wins">0</strong></span>
+        <span><small>Draws</small><strong id="draws">0</strong></span>
+        <span><small>Losses</small><strong id="losses">0</strong></span>
+      </div>
+    </header>
+
+    <main class="table-layout">
+      <section class="table" aria-labelledby="table-title">
+        <div class="hand dealer-hand">
+          <div class="hand-label"><span>Dealer</span><strong id="dealer-total">—</strong></div>
+          <div class="cards" id="dealer-cards" aria-label="Dealer cards"></div>
+        </div>
+
+        <div class="table-center">
+          <p class="eyebrow" id="status-label">Shared table is ready</p>
+          <h1 id="table-title">One dealer,<br>up to five seats.</h1>
+          <p class="result-copy" id="result-copy">Deal a hand. Seats play in order; the model advises each seat from what it can see.</p>
+        </div>
+
+        <div class="seats" id="seats" aria-label="Player seats"></div>
+
+        <div class="actions multi-actions" aria-label="Table actions">
+          <label class="seat-picker">Seats
+            <select id="seat-count">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </label>
+          <button class="button button-secondary" id="hit" disabled>Hit</button>
+          <button class="button button-secondary" id="stand" disabled>Stand</button>
+          <button class="button button-secondary" id="ai-move" disabled>AI move</button>
+          <button class="button button-primary" id="deal">Deal a hand</button>
+        </div>
+        <div class="multi-links">
+          <a href="/classic">Solo table</a><span> · </span><a href="/">Betting table</a>
+          <span> · keys 1–5 select seat, H hit, S stand, A AI move</span>
+        </div>
+      </section>
+
+      <aside class="rail" aria-label="AI decision rail">
+        <div class="rail-heading"><span class="live-dot"></span><span>Seat advice</span></div>
+        <div class="advice-card" id="advice-card">
+          <p class="eyebrow" id="advice-seat">No hand yet</p>
+          <p class="advice-action" id="advice-action">Waiting</p>
+          <p class="advice-note" id="advice-note">Deal a hand to see the model’s preferred move.</p>
+        </div>
+        <div class="values" id="values" hidden>
+          <div><span>Stand value</span><strong id="stand-value">—</strong></div>
+          <div><span>Hit value</span><strong id="hit-value">—</strong></div>
+        </div>
+        <div class="seat-list" id="seat-list"></div>
+        <div class="rail-rule"></div>
+        <p class="rules-copy">Same rules as the solo table: unlimited deck, dealer stands on 17, even money, no hole-card leak. Each seat is an independent hand against the same dealer.</p>
+        <button class="text-button" id="reset-score">Reset table score</button>
+      </aside>
+    </main>
+
+    <footer>
+      <span>The model sees each seat total, the dealer up-card, and usable aces.</span>
+      <span>For learning and experimentation.</span>
+    </footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/multi.js"></script>
+</body>
+</html>

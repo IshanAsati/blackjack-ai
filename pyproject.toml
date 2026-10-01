@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "blackjackai"
+version = "0.1.0"
+description = "Learn blackjack with a PyTorch Deep Q-Network"
+requires-python = ">=3.11"
+dependencies = ["gymnasium>=1.2,<2", "numpy>=2,<3", "torch>=2.9,<3"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10"]
+
+[project.scripts]
+blackjackai = "blackjackai.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["blackjackai*"]
+
+[tool.setuptools.package-data]
+blackjackai = ["static/*.html", "static/*.css", "static/*.js"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

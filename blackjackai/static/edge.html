@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173e46">
+  <title>The Learning Table · Advantage mode</title>
+  <link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/edge.css">
+</head>
+<body class="edge-app">
+  <header class="masthead">
+    <a class="wordmark" href="/"><span class="wordmark-mark">21</span><span><strong>The Learning Table</strong><small>Finite-shoe simulation</small></span></a>
+      <nav class="mode-nav" aria-label="Views">
+        <button id="live-tab" class="selected" aria-pressed="true">Live table</button>
+        <button id="sim-tab" aria-pressed="false">Bankroll sim</button>
+        <button id="training-tab" aria-pressed="false">Training</button>
+        <a href="/classic">Play yourself ↗</a>
+      </nav>
+  </header>
+  <main>
+    <section id="live-view">
+      <div class="session-bar">
+        <div><span class="eyebrow">This session</span><strong id="session-profit">+0.0 <small>units</small></strong></div>
+        <dl><div><dt>Observed</dt><dd id="round-count">0</dd></div><div><dt>Bets placed</dt><dd id="bet-count">0</dd></div><div><dt>Sat out</dt><dd id="skip-count">0</dd></div></dl>
+        <div class="run-state"><span class="live-dot" id="running-dot"></span><span id="run-status" role="status" aria-live="polite">Loading model…</span></div>
+      </div>
+      <div class="edge-layout">
+        <section class="edge-table" aria-labelledby="table-heading">
+          <div class="table-top"><span class="eyebrow">Next round · <span id="shoe-label">Shoe 1</span></span><span class="shoe-count" id="cards-left">312 cards left</span></div>
+          <div class="decision-block"><p id="next-decision" class="decision">Observe</p><p id="decision-copy">Loading the trained betting policy.</p></div>
+          <div class="count-strip"><div><span>True count</span><strong id="true-count">0.00</strong></div><div><span>Estimated return</span><strong id="predicted-return">—</strong></div><div><span>Bet threshold</span><strong id="bet-threshold">—</strong></div></div>
+          <div class="shoe-track" role="progressbar" aria-label="Cards remaining in shoe" aria-valuemin="0" aria-valuemax="312" aria-valuenow="312"><span id="shoe-fill"></span></div>
+          <div class="round-detail">
+            <div class="round-heading"><h1 id="table-heading">Watch the next hand.</h1><span id="last-bet">No hand dealt</span></div>
+            <div class="hand"><div class="hand-label"><span>Dealer</span><strong id="dealer-total">—</strong></div><div class="cards" id="dealer-cards"><span class="empty-cards">Cards appear after the round</span></div></div>
+            <div class="hand"><div class="hand-label"><span id="player-label">Table player</span><strong id="player-total">—</strong></div><div class="cards" id="player-cards"></div></div>
+            <p class="round-note" id="round-note">Bets are chosen before the deal. Cards are revealed after the hand.</p>
+          </div>
+          <div class="edge-actions"><button id="next-round" class="button button-secondary" disabled>Next round</button><button id="next-bet" class="button button-secondary" disabled>Find next bet</button></div>
+          <p class="table-caption">6 decks · 3:2 blackjack · dealer stands on 17 · double allowed</p>
+        </section>
+        <section class="performance" aria-labelledby="profit-heading">
+          <div class="section-title"><div><p class="eyebrow">All rounds count</p><h2 id="profit-heading">Let the model play.</h2></div><span class="sim-label">Simulation</span></div>
+          <div class="auto-panel">
+            <button id="auto" class="button button-primary" disabled>Start auto</button>
+            <label>Speed<select id="speed"><option value="1">1 round / second</option><option value="100" selected>100 rounds / batch</option><option value="1000">1,000 rounds / batch</option></select></label>
+            <button id="benchmark" class="batch-button" disabled>Run 100,000 rounds</button>
+          </div>
+          <p class="control-note" id="control-note">Auto plays continuously until paused. Fixed runs finish all 100,000 rounds.</p>
+          <div class="chart-header"><span>Net profit · units</span><label><input type="checkbox" id="show-baseline" checked> Compare betting every round</label></div>
+          <svg id="profit-chart" viewBox="0 0 650 270" role="img" aria-label="Cumulative profit over observed rounds"></svg>
+          <div class="chart-legend"><span><i class="legend-model"></i>Our model</span><span><i class="legend-baseline"></i>Bet every round</span></div>
+          <div class="live-metrics"><div><span>Return / initial unit</span><strong id="live-roi">—</strong></div><div><span>Always-bet profit</span><strong id="baseline-profit">0.0 u</strong></div><div><span>Wins / losses / pushes</span><strong id="results">0 / 0 / 0</strong></div></div>
+          <p class="interval" id="live-interval">Session uncertainty appears after enough complete shoes. Short sessions can lose.</p>
+          <div class="evidence"><p class="eyebrow">Previously frozen test · separate from this session</p><strong id="evidence-value">—</strong><span id="evidence-copy">Loading held-out results…</span></div>
+          <div class="new-session"><label>Session seed<input id="seed" type="number" min="0" max="4294967295" step="1" placeholder="Random"></label><button id="new-session" class="text-button" disabled>Start new session</button><button id="export" class="text-button" disabled>Download session</button></div>
+        </section>
+      </div>
+      <details class="rules-detail"><summary>How this mode works</summary><p>The neural model chooses whether to bet one initial unit or observe. A fixed strategy plays hit, stand, and double. Another player keeps the shoe moving when we sit out. All cards become visible after the hand. We assume free observation, entry on any round, no bankroll cap, and no splitting or surrender. Gains and losses from doubling are included. Live intervals describe the session; repeatedly watching them does not replace a fixed-length test.</p></details>
+    </section>
+    <section id="sim-view" hidden>
+      <div class="training-intro"><p class="eyebrow">Bankroll simulator</p><h1>Stake the model. Watch the roll.</h1><p>Give it a bankroll and a shoe budget. It bets half-Kelly sizes with your money until the roll doubles, busts, or runs out of shoes — flat 1-unit betting rides along on the same deals for comparison. Simulation, not a promise.</p></div>
+      <div class="training-layout">
+        <section class="training-plot">
+          <div class="section-title"><h2>Bankroll over rounds</h2><span class="sim-label" id="sim-outcome">No run yet</span></div>
+          <svg id="sim-chart" viewBox="0 0 800 330" role="img" aria-label="Simulated bankroll over observed rounds"></svg>
+          <div class="chart-legend"><span><i class="legend-model"></i>Kelly-sized</span><span><i class="legend-baseline"></i>Flat 1 unit</span></div>
+          <div id="sim-stats" class="checkpoint-values"></div>
+          <p class="chart-note" id="sim-note">Stops early on double or ruin. Short runs can lose; the edge is long-run only.</p>
+        </section>
+        <aside class="training-summary">
+          <h2>Your stake</h2>
+          <div class="new-session">
+            <label>Bankroll $<input id="sim-bankroll" type="number" min="25" max="10000000" step="25" value="10000"></label>
+            <label>Unit<select id="sim-unit"><option value="5">$5</option><option value="10">$10</option><option value="25" selected>$25</option><option value="100">$100</option></select></label>
+            <label>Shoes (max 2000)<input id="sim-shoes" type="number" min="1" max="2000" step="1" value="1000"></label>
+            <label>Seed<input id="sim-seed" type="number" min="0" max="4294967295" step="1" placeholder="Random"></label>
+            <button id="sim-run" class="button button-primary">Run it</button>
+          </div>
+          <div class="training-bettor"><p class="eyebrow">How stakes scale</p><h3>Kelly, sized to your roll.</h3><p>Bet = ½ · edge / 1.3 × bankroll, capped (4u cap at a $10k roll, scaled down for smaller rolls). Cap and edge gate come from the validated sizing run, not from this page.</p></div>
+        </aside>
+      </div>
+    </section>
+    <section id="training-view" hidden>      <div class="training-intro"><p class="eyebrow">Recorded learning curves</p><h1>See what the models learned.</h1><p>Inspect the saved checkpoints. These are completed training runs; opening this view does not retrain a model.</p></div>
+      <div class="training-layout">
+        <section class="training-plot"><div class="section-title"><h2>Strategy value over training</h2><span class="sim-label">Higher is better</span></div><p class="chart-note">Exact average reward per hand · original unlimited-deck rules</p><svg id="training-chart" viewBox="0 0 800 330" role="img" aria-label="RL and mixed-model expected return over training episodes"></svg><div class="chart-legend"><span><i class="legend-model"></i>RL from scratch</span><span><i class="legend-baseline"></i>Pretraining + RL</span><span><i class="legend-optimal"></i>Optimal strategy</span></div><label class="scrubber">Inspect checkpoint <strong id="checkpoint-label">—</strong><input id="checkpoint" type="range" min="0" max="7" value="7"></label><div id="checkpoint-values" class="checkpoint-values"></div><p class="chart-note">The best checkpoint is retained; later training can regress. Even optimal play here has a negative expected return.</p></section>
+        <aside class="training-summary"><h2>Three approaches</h2><div id="training-cards"></div><div class="training-bettor"><p class="eyebrow">The live table’s separate model</p><h3>Learn when to bet.</h3><p id="bet-training-info">Betting values learned from public card counts and simulated outcomes.</p><p>Full epoch loss histories were not saved for the autoencoder or betting model. Only their recorded summaries are shown.</p></div></aside>
+      </div>
+    </section>
+  </main>
+  <footer><span>Only exposed cards inform the next bet.</span><span>No cherry-picked deals. Profit is never guaranteed.</span></footer>
+  <div id="toast" class="toast" role="alert"></div>
+  <script src="/edge.js"></script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173e46">
+  <meta name="description" content="Blackjack AI: a neural network that counts cards and sizes bets. Runs fully in your browser.">
+  <title>The Learning Table · Blackjack AI</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="masthead">
+    <span class="wordmark"><span class="wordmark-mark">21</span><span><strong>The Learning Table</strong><small>Neural blackjack · runs 100% in-browser</small></span></span>
+    <nav class="tabs" aria-label="Views">
+      <button data-tab="table" class="selected" aria-pressed="true">Count table</button>
+      <button data-tab="play" aria-pressed="false">Play</button>
+      <button data-tab="multi" aria-pressed="false">Shared</button>
+      <button data-tab="advisor" aria-pressed="false">Advisor</button>
+      <button data-tab="sim" aria-pressed="false">Bankroll sim</button>
+      <button data-tab="training" aria-pressed="false">Training</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="tab-table" class="view">
+      <div class="session-bar">
+        <div><span class="eyebrow">Session</span><strong id="t-profit">+0.0 <small>units</small></strong></div>
+        <dl><div><dt>Observed</dt><dd id="t-rounds">0</dd></div><div><dt>Bets</dt><dd id="t-bets">0</dd></div><div><dt>Sat out</dt><dd id="t-skips">0</dd></div></dl>
+        <span class="run-state" id="t-status">Sized by half-Kelly · 6 decks · 3:2 · S17</span>
+      </div>
+      <div class="cols">
+        <section class="felt" aria-label="Counting table">
+          <div class="felt-top"><span class="eyebrow">Next round · <span id="t-shoe">Shoe 1</span></span><span class="cards-left" id="t-left"></span></div>
+          <p class="decision" id="t-decision">—</p>
+          <p class="decision-sub" id="t-decision-sub">Deal a hand to meet the model.</p>
+          <div class="count-strip"><div><span>True count</span><strong id="t-tc">—</strong></div><div><span>Est. return</span><strong id="t-ev">—</strong></div><div><span>Stake</span><strong id="t-stake">—</strong></div></div>
+          <div class="track"><span id="t-fill"></span></div>
+          <div class="last-hand"><h2 id="t-heading">Watch the next hand.</h2><span id="t-lastbet">No hand dealt</span>
+            <div class="handrow"><span>Dealer</span><div class="cards" id="t-dealer"></div><strong id="t-dtotal"></strong></div>
+            <div class="handrow"><span id="t-plabel">Table</span><div class="cards" id="t-player"></div><strong id="t-ptotal"></strong></div>
+            <p class="round-note" id="t-note"></p>
+          </div>
+          <div class="btnrow">
+            <button class="btn ghost" id="t-next">Next round</button>
+            <button class="btn ghost" id="t-find">Find next bet</button>
+            <button class="btn ghost" id="t-auto">Start auto</button>
+            <button class="btn primary" id="t-new">New session</button>
+          </div>
+        </section>
+        <section class="panel" aria-label="Performance">
+          <h2>Session profit</h2>
+          <svg id="t-chart" viewBox="0 0 640 260" role="img" aria-label="Session profit chart"></svg>
+          <div class="metrics"><div><span>Return / unit</span><strong id="t-roi">—</strong></div><div><span>Bankroll</span><strong id="t-roll">—</strong></div><div><span>W / L / P</span><strong id="t-wlp">0 / 0 / 0</strong></div></div>
+          <p class="fine">Bets commit before the deal; every exposed card updates the count. Simulation — short sessions can lose.</p>
+        </section>
+      </div>
+    </section>
+
+    <section id="tab-play" class="view" hidden>
+      <div class="cols">
+        <section class="felt" aria-label="Solo table">
+          <div class="felt-top"><span class="eyebrow">Solo · unlimited deck</span></div>
+          <div class="handrow"><span>Dealer</span><div class="cards" id="p-dealer"></div><strong id="p-dtotal"></strong></div>
+          <div class="handrow"><span>You</span><div class="cards" id="p-player"></div><strong id="p-ptotal"></strong></div>
+          <p class="round-note" id="p-note">Deal a hand. The model reads the same cards you see.</p>
+          <div class="btnrow">
+            <button class="btn ghost" id="p-hit" disabled>Hit (H)</button>
+            <button class="btn ghost" id="p-stand" disabled>Stand (S)</button>
+            <button class="btn primary" id="p-deal">Deal a hand</button>
+          </div>
+        </section>
+        <section class="panel" aria-label="Advice">
+          <h2>Model says: <span id="p-advice">—</span></h2>
+          <p class="fine" id="p-advice-note">Deal to see the preferred move and its values.</p>
+          <div class="metrics"><div><span>Stand value</span><strong id="p-vs">—</strong></div><div><span>Hit value</span><strong id="p-vh">—</strong></div><div><span>Session</span><strong id="p-score">0 / 0 / 0</strong></div></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="tab-multi" class="view" hidden>
+      <div class="cols">
+        <section class="felt" aria-label="Shared table">
+          <div class="felt-top"><span class="eyebrow">Shared · <span id="m-turn">deal to begin</span></span>
+            <label>Seats <select id="m-seats"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></label></div>
+          <div class="handrow"><span>Dealer</span><div class="cards" id="m-dealer"></div><strong id="m-dtotal"></strong></div>
+          <div id="m-seats"></div>
+          <div class="btnrow">
+            <button class="btn ghost" id="m-hit" disabled>Hit</button>
+            <button class="btn ghost" id="m-stand" disabled>Stand</button>
+            <button class="btn ghost" id="m-ai" disabled>AI move</button>
+            <button class="btn primary" id="m-deal">Deal</button>
+          </div>
+        </section>
+        <section class="panel" aria-label="Seat advice"><h2>Seat advice</h2><div id="m-advice"></div>
+          <p class="fine">Each seat is an independent hand against the same dealer; the DQN advises every live seat.</p></section>
+      </div>
+    </section>
+
+    <section id="tab-advisor" class="view" hidden>
+      <div class="cols">
+        <section class="felt" aria-label="Advisor">
+          <p class="eyebrow">Dealer shows</p><div class="picker" id="a-dealer"></div>
+          <p class="eyebrow" style="margin-top:18px">Your hand <strong id="a-total"></strong></p>
+          <div class="cards" id="a-hand"></div>
+          <div class="picker" id="a-player"></div>
+          <div class="btnrow"><button class="btn ghost" id="a-undo">Undo</button><button class="btn ghost" id="a-clear">Clear</button></div>
+        </section>
+        <section class="panel" aria-label="Verdict"><h2 id="a-verdict">Pick the cards</h2>
+          <p class="fine" id="a-note">Dealer card, then at least two cards for your hand.</p>
+          <div class="metrics"><div><span>Stand value</span><strong id="a-vs">—</strong></div><div><span>Hit value</span><strong id="a-vh">—</strong></div></div>
+          <p class="fine">Unlimited-deck hit/stand model. Pairs advised as hit/stand only — it never splits.</p></section>
+      </div>
+    </section>
+
+    <section id="tab-sim" class="view" hidden>
+      <div class="cols">
+        <section class="panel" aria-label="Stake">
+          <h2>Stake the model</h2>
+          <div class="form">
+            <label>Bankroll $<input id="s-roll" type="number" min="25" max="10000000" value="10000"></label>
+            <label>Unit<select id="s-unit"><option>5</option><option>10</option><option selected>25</option><option>100</option></select></label>
+            <label>Shoes (≤1000)<input id="s-shoes" type="number" min="1" max="1000" value="500"></label>
+            <label>Seed<input id="s-seed" type="number" placeholder="Random"></label>
+            <button class="btn primary" id="s-run">Run it</button>
+          </div>
+          <p class="fine">Half-Kelly vs flat 1-unit on the same deals. Stops on double or bust. Simulation, not a promise.</p>
+        </section>
+        <section class="panel" aria-label="Outcome">
+          <h2 id="s-outcome">No run yet</h2>
+          <svg id="s-chart" viewBox="0 0 640 260" role="img" aria-label="Bankroll chart"></svg>
+          <div class="metrics" id="s-stats"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="tab-training" class="view" hidden>
+      <div class="panel"><h2>What the models learned</h2>
+        <p class="fine">Recorded runs, frozen into this page. Exact return per hand on the original unlimited-deck rules (optimal −4.66%).</p>
+        <svg id="r-chart" viewBox="0 0 780 300" role="img" aria-label="Training curves"></svg>
+        <div class="metrics" id="r-cards"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><span>Models run locally in your browser — no server, no tracking.</span><span>For learning; the house edge is real.</span></footer>
+  <div class="toast" id="toast"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

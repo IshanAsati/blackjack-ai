@@ -1,0 +1,16 @@
+{
+  "generated_by": "blackjackai export",
+  "files": [
+    "classic_q.json",
+    "count_q.json",
+    "bet_value.json",
+    "pairs.json",
+    "fixed_play.json",
+    "sizing.json",
+    "training.json"
+  ],
+  "count_strategy": true,
+  "betting": true,
+  "sizing": true,
+  "optimal_return": -0.0465559770666975
+}

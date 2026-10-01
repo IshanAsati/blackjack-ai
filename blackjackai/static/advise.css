@@ -1,0 +1,25 @@
+.advise-nav { color: #68777b; font-size: 13px; }
+.advise-nav a { color: var(--ink); }
+.advise-block { position: relative; z-index: 1; }
+.advise-block .eyebrow { color: var(--brass); margin: 0 0 12px; }
+.advise-block .eyebrow strong { color: var(--white); font: 700 22px/1 var(--display); margin-left: 8px; }
+.picker { display: flex; flex-wrap: wrap; gap: 8px; }
+.picker button {
+  min-width: 52px; padding: 12px 0; color: var(--white); background: rgba(255,255,255,.06);
+  border: 1px solid #7ca09e; border-radius: 5px; cursor: pointer;
+  font: 700 17px/1 var(--display); transition: transform .12s, background .12s;
+}
+.picker button:hover:not(:disabled) { background: rgba(255,255,255,.14); transform: translateY(-2px); }
+.picker button:focus-visible { outline: 3px solid var(--brass); outline-offset: 2px; }
+.picker button.selected { background: var(--coral); border-color: var(--coral); box-shadow: 0 4px 0 var(--coral-dark); }
+#dealer-picker button.selected { background: var(--brass); border-color: var(--brass); box-shadow: 0 4px 0 #8a743b; color: var(--ink); }
+.hand-actions { display: flex; gap: 11px; margin-top: 14px; }
+.hand-actions .button { min-width: 0; padding: 10px 16px; font-size: 13px; }
+.empty-hand { color: #8fb0ad; font-size: 13px; }
+#hand-cards { flex-wrap: wrap; row-gap: 10px; }
+#hand-cards .card { cursor: pointer; }
+#hand-cards .card:hover { transform: translateY(-4px); }
+.advice-action.bust { font-size: 34px; }
+@media (max-width: 560px) {
+  .picker button { min-width: 44px; padding: 10px 0; font-size: 15px; }
+}

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173e46">
+  <title>Strategy Advisor · Blackjack AI</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/advise.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="masthead">
+      <a class="wordmark" href="/" aria-label="The Learning Table home">
+        <span class="wordmark-mark">21</span>
+        <span><strong>Strategy Advisor</strong><small>Hit or stand, per the DQN</small></span>
+      </a>
+      <nav class="advise-nav" aria-label="Tables">
+        <a href="/classic">Solo table</a><span> · </span><a href="/multi">Shared table</a>
+      </nav>
+    </header>
+
+    <main class="table-layout">
+      <section class="table" aria-labelledby="advise-title">
+        <div class="advise-block">
+          <p class="eyebrow">Dealer shows</p>
+          <div class="picker" id="dealer-picker" role="group" aria-label="Dealer up-card"></div>
+        </div>
+
+        <div class="table-center">
+          <p class="eyebrow" id="status-label">Enter the cards</p>
+          <h1 id="advise-title">Should you<br>hit or stand?</h1>
+          <p class="result-copy" id="result-copy">Pick the dealer's card, then build your hand. The model answers from the same position.</p>
+        </div>
+
+        <div class="advise-block">
+          <p class="eyebrow">Your hand <strong id="hand-total">—</strong></p>
+          <div class="cards" id="hand-cards" aria-label="Your cards"><span class="empty-hand">Tap cards below to add them</span></div>
+          <div class="picker" id="player-picker" role="group" aria-label="Add a card to your hand"></div>
+          <div class="hand-actions">
+            <button class="button button-secondary" id="undo" disabled>Undo card</button>
+            <button class="button button-secondary" id="clear" disabled>Clear hand</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="rail" aria-label="Advice rail">
+        <div class="rail-heading"><span class="live-dot"></span><span>Model advice</span></div>
+        <div class="advice-card" id="advice-card">
+          <p class="eyebrow" id="advice-context">Waiting for cards</p>
+          <p class="advice-action" id="advice-action">—</p>
+          <p class="advice-note" id="advice-note">Choose a dealer card and at least two cards for your hand.</p>
+        </div>
+        <div class="values" id="values" hidden>
+          <div><span>Stand value</span><strong id="stand-value">—</strong></div>
+          <div><span>Hit value</span><strong id="hit-value">—</strong></div>
+        </div>
+        <div class="rail-rule"></div>
+        <p class="rules-copy">Unlimited deck, dealer stands on 17, even money — the rules the network trained on. Pairs are advised as hit/stand only; this model never splits. Keys 2–9 add cards, Backspace undoes.</p>
+      </aside>
+    </main>
+
+    <footer>
+      <span>Advice only — the house edge is real either way.</span>
+      <span>For learning and experimentation.</span>
+    </footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/advise.js"></script>
+</body>
+</html>
